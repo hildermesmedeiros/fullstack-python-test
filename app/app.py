@@ -6,7 +6,7 @@ import json
 app = Flask(__name__)
 
 
-def user_info() -> List[Dict]:
+def user_login() -> List[Dict]:
 #database user, pswd, infos, and connection
     config = {
         'user': 'root',
@@ -19,9 +19,11 @@ def user_info() -> List[Dict]:
 #python postgresql connection
     cursor = connection.cursor()
 #Selectin first table
-    cursor.execute('SELECT * FROM siteuser')
+    user= str('hildermes')
+    cursor.execute('SELECT uname FROM tm_siteuser WHERE uname=%s',[user])
 #Showing something
-    results = [{uname: email} for (uname, email) in cursor]
+    data=cursor.fetchone()
+    results = data
 #closing the connection need to do something
     cursor.close()
 #closing the db connection
@@ -31,7 +33,7 @@ def user_info() -> List[Dict]:
 
 @app.route('/')
 def index() -> str:
-    return json.dumps({'siteuser': user_info()})
+    return json.dumps({'siteuser': user_login()})
 
 ##Coonection to external port, binding to
 if __name__ == '__main__':
