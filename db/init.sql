@@ -13,7 +13,7 @@ CREATE TABLE tm_siteuser (
   niver DATE NOT NULL,
   t1 TIMESTAMP NOT NULL 
     ON UPDATE CURRENT_TIMESTAMP,
-  hashpass BINARY NOT NULL,
+  hashpass CHAR(128) NOT NULL,
   typeid INT(2) NOT NULL
 )ENGINE=INNODB DEFAULT CHARSET=utf8;
 
@@ -62,4 +62,5 @@ INSERT INTO tm_siteuser(
   uname, fname, mname, email, niver, hashpass,typeid
 )
 VALUES
-  ('hildermes', 'Hildermes José', 'Medeiros Filho', 'hildermes@gmail.com','1987-12-04', 'cf23df2207d99a74fbe169e3eba035e633b65d94', '2');
+  ('test', 'teste', 'teste', 'teste','1987-12-04', 'cf23df2207d99a74fbe169e3eba035e633b65d94', '2');
+
