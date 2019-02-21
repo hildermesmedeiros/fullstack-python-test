@@ -1,6 +1,7 @@
 from typing import List, Dict
 from flask import Flask, request, render_template, json, g
 import mysql.connector
+from flask_debugtoolbar import DebugToolbarExtension
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired
@@ -11,86 +12,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import time  
 import datetime
 import os
+from backEnd import Users
 
 app = Flask(__name__)
+app.debug = True
 app.config['SECRET_KEY'] = 'DoNoEVERshareittosomeone'
 auth = HTTPBasicAuth()
 ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 
-def gettingUsers() -> List[Dict]:
-    config = {
-        'user': 'root',
-        'password': 'root',
-        'host': 'db',
-        'port': '3306',
-        'database': 'telemedicina'
-    }
-    connection = mysql.connector.connect(**config)
-#python postgresql connection
-    cursor = connection.cursor()
-#Selecting all users
-    cursor.execute('SELECT uname,hashpass FROM tm_siteuser')
-#fetchin data  all data from user   
-#    data=cursor.fetchone()
-    users = []
-    for row in cursor:
-        a = list(row)
-        dic = {'username': a[0], 'password': a[1]}
-        users.append(dic)
-#closing the table connection
-    cursor.close()
-#closing the db connection
-    connection.close()
-    return users
+toolbar = DebugToolbarExtension(app)
+app.config['DEBUG_TB_PROFILER_ENABLED'] = True
 
-def add_hildermes():
-    try:
-        config = {
-        'user': 'root',
-        'password': 'root',
-        'host': 'db',
-        'port': '3306',
-        'database': 'telemedicina'
-        }
-        
-        connection = mysql.connector.connect(**config)	
-        cursor = connection.cursor()
-        
-        username = 'hildermes'
-        firstname = 'Hildermes josé'
-        middlename = 'José Medeiros Filho'
-        email = 'hildermes@gmail.com'
-        birthday = '1987-12-04'
-        timestamp = time.strftime('%Y-%m-%d %H-%M-%S')
-        password = generate_password_hash('tele')
-        usertype = '2'
-        
-        data = []
-        sql = "SELECT EXISTS(SELECT uname FROM tm_siteuser WHERE uname = %s LIMIT 1)"
-        adr = ("hildermes", )
-        cursor.execute(sql, adr)
-#converting tuple to list    
-        data = list(cursor.fetchone())
-        print(str(data))
-        cursor.close()
-        connection.close()
-        if data[0] == 0:
-            print('O adm não existe, irei adicionalo')
-            print('username = hildermes')
-            print('password = tele')
-            connection = mysql.connector.connect(**config)	
-            cursor = connection.cursor()
-            cursor.execute("INSERT INTO tm_siteuser(uname,fname,mname,email,niver,t1,hashpass,typeid) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(username,firstname,middlename,email,birthday,timestamp,password,usertype))
-            cursor.close()
-        #commit data do database
-            connection.commit()
-            connection.close()
-        else:
-            print('hildermes já foi adicionado a base')   
-    except:
-        print('Algum erro aconteceu')
-    finally:
-        print('add_hildermes() terminou de rodar')       
+
+     
                 
 add_hildermes()
 '''
@@ -106,7 +40,7 @@ for dic in userslist:
 '''          
 @auth.verify_password
 def verify_password(username, password):
-    userslist = gettingUsers()
+    userslist = Users.gettingUsers()
     g.user = None
     for dic in userslist:
         if dic['username'] == username:
