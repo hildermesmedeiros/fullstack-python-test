@@ -1,5 +1,5 @@
 from typing import List, Dict
-from flask import Flask, request, render_template, json
+from flask import Flask, request, render_template, json, g
 import mysql.connector
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
@@ -15,6 +15,7 @@ import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'DoNoEVERshareittosomeone'
 auth = HTTPBasicAuth()
+ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 
 def gettingUsers() -> List[Dict]:
     config = {
@@ -43,53 +44,53 @@ def gettingUsers() -> List[Dict]:
     return users
 
 def add_hildermes():
-#    try:
-    config = {
-    'user': 'root',
-    'password': 'root',
-    'host': 'db',
-    'port': '3306',
-    'database': 'telemedicina'
-    }
-    
-    connection = mysql.connector.connect(**config)	
-    cursor = connection.cursor()
-
-    username = 'hildermes'
-    firstname = 'Hildermes josé'
-    middlename = 'José Medeiros Filho'
-    email = 'hildermes@gmail.com'
-    birthday = '1987-12-04'
-    timestamp = time.strftime('%Y-%m-%d %H-%M-%S')
-    password = generate_password_hash('tele')
-    usertype = '2'
-    
-    data = []
-    sql = "SELECT EXISTS(SELECT uname FROM tm_siteuser WHERE uname = %s LIMIT 1)"
-    adr = ("hildermes", )
-    cursor.execute(sql, adr)
-#converting tuple to list    
-    data = list(cursor.fetchone())
-    print(str(data))
-    cursor.close()
-    connection.close()
-    if data[0] == 0:
-        print('O adm não existe, irei adicionalo')
-        print('username = hildermes')
-        print('password = tele')
+    try:
+        config = {
+        'user': 'root',
+        'password': 'root',
+        'host': 'db',
+        'port': '3306',
+        'database': 'telemedicina'
+        }
+        
         connection = mysql.connector.connect(**config)	
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO tm_siteuser(uname,fname,mname,email,niver,t1,hashpass,typeid) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(username,firstname,middlename,email,birthday,timestamp,password,usertype))
+        
+        username = 'hildermes'
+        firstname = 'Hildermes josé'
+        middlename = 'José Medeiros Filho'
+        email = 'hildermes@gmail.com'
+        birthday = '1987-12-04'
+        timestamp = time.strftime('%Y-%m-%d %H-%M-%S')
+        password = generate_password_hash('tele')
+        usertype = '2'
+        
+        data = []
+        sql = "SELECT EXISTS(SELECT uname FROM tm_siteuser WHERE uname = %s LIMIT 1)"
+        adr = ("hildermes", )
+        cursor.execute(sql, adr)
+#converting tuple to list    
+        data = list(cursor.fetchone())
+        print(str(data))
         cursor.close()
-    #commit data do database
-        connection.commit()
         connection.close()
-    else:
-        print('hildermes já foi adicionado a base')   
-#    except:
-#        print('hildermes já foi adicionado a base')
-#    finally:
-#        print('Hildermes adicionado a base')       
+        if data[0] == 0:
+            print('O adm não existe, irei adicionalo')
+            print('username = hildermes')
+            print('password = tele')
+            connection = mysql.connector.connect(**config)	
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO tm_siteuser(uname,fname,mname,email,niver,t1,hashpass,typeid) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(username,firstname,middlename,email,birthday,timestamp,password,usertype))
+            cursor.close()
+        #commit data do database
+            connection.commit()
+            connection.close()
+        else:
+            print('hildermes já foi adicionado a base')   
+    except:
+        print('Algum erro aconteceu')
+    finally:
+        print('add_hildermes() terminou de rodar')       
                 
 add_hildermes()
 '''
@@ -106,23 +107,46 @@ for dic in userslist:
 @auth.verify_password
 def verify_password(username, password):
     userslist = gettingUsers()
+    g.user = None
     for dic in userslist:
         if dic['username'] == username:
             hashpass = dic['password']
-            return check_password_hash(hashpass, password)
+            if check_password_hash(hashpass, password) == True:
+                return True  
     return False
     
 class signinForm(FlaskForm):
 	#flask recommendation is to use inputRequired instead of datarequired
     username = StringField('Nome do usuário', validators = [DataRequired()])
     password = PasswordField('senha', validators=[InputRequired()])
-
-@app.route('/')
-@auth.login_required
+	
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return "Seja bem vindo, %s!" % auth.username()
+    return render_template('index.html')
 
+@app.route('/signin', methods=['GET','POST'])
+@auth.login_required
+def signin():
+    try:
+        form = signinForm(FlaskForm)
+        error = None
+        if form.validate_on_submit() and verify_password(username,password) == True:
+            g.user = username           
+            next = flask.request.args.get('next')
+            #this a MUST to prevent redirect injections
+            if not is_safe_url(next):
+                return flask.abort(400)
+        return flask.redirect(next or flask.url_for('index'))   
+    except:
+        error = 'Houve algum erro ao logar'  
+    return render_template('signin.html', error=error)
 
+@app.route("/logout")
+@auth.login_required
+def logout():
+    logout_user()
+    return redirect('/')
+    
 ##Coonection to external port, binding to
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

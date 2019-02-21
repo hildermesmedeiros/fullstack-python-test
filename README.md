@@ -1,6 +1,18 @@
 # This site was made using WEBodm  and shamir.stav as reference
-https://medium.com/@shamir.stav_83310/dockerizing-a-flask-mysql-app-with-docker-compose-c4f51d20b40d
+### Before using docker try
+## sudo pip install virtualenv
+## sudo apt-get install docker-compose
 
-## I'll build a site to do something
-### first I'll try to dockerize.
-#### first app just shows some users and emails on database
+
+# @signin
+## check user name and password, compares to hash password and username
+##### Signin extends index.html, if the user is logged and password is right. User Log's in.
+
+# @signup
+
+
+
+
+# Docker could'nt see my images or css, I think might need nginx or some server emulation.    
+
+##### So far, only log user in and does nothing more.
