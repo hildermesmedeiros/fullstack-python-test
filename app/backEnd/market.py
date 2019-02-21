@@ -5,6 +5,7 @@ import time
 
 def insert_product(username, product_name, product_description, product_price):    
     try:
+        print("Inserindo produto")
         uname = str.lower(username)
         pname = product_name
         pdescription = product_description
@@ -45,7 +46,7 @@ def insert_product(username, product_name, product_description, product_price):
             pcreation = time.strftime('%Y-%m-%d %H-%M-%S')
             cursor = connection.cursor()
             sql = "INSERT INTO tm_products(name,description,price,t1,user_id) VALUES(%s,%s,%s,%s,%s)"
-            adr = (pname, pdescription, pprice, pcreation, userid)
+            adr = (pname, pdescription, pprice, pcreation, userid,)
             cursor.execute(sql, adr)
             cursor.close()
             #commit data do database
@@ -55,3 +56,50 @@ def insert_product(username, product_name, product_description, product_price):
         print('2 ALGUM ERRO ACONTECEU com market. Erro: ', e)
     finally:
         print('fechando')
+
+def delete_product_by_id(product_id):
+    try:
+        print("deletando produto")
+        config = {
+        'user': 'root',
+        'password': 'root',
+        'host': 'db',
+        'port': '3306',
+        'database': 'telemedicina'
+        }
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor()
+        
+        sql = "DELETE FROM tm_products WHERE id = %s"
+        adr = (product_id,)
+        cursor.execute(sql, adr)
+        connection.commit()
+        connection.close()
+    except Exception as e:
+        print("Error ",e, " ao deletar o produto de id:[",product_id,"]")
+    
+def show_produtct_info(product_id):
+    try:
+        print("Informações sobre o produto")
+        config = {
+        'user': 'root',
+        'password': 'root',
+        'host': 'db',
+        'port': '3306',
+        'database': 'telemedicina'
+        }
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor()
+        
+        sql = "SELECT * FROM tm_products WHERE id = %s"
+        adr = (product_id,)
+        cursor.execute(sql, adr)
+        data = list(cursor.fetchall())
+        cursor.close()
+        connection.close()
+        if data[0] == 0:
+            print("Produto não econtrado")
+        else:    
+            print(data)
+    except Exception as e:
+        print("Error", e, " ao buscar pelo produto de id:[", product_id,"]")
