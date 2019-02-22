@@ -20,17 +20,17 @@
 ###### auto generates timestamp, that shows user add date or last time user info got updated.
 
 # @/products  to be used with post methods
-   market.insert_product(username, product_name, product_description, product_price)
+   products.insert_product(username, product_name, product_description, product_price)
 ###### Adds products related to username, auto insert username id
-   market.show_produtct_info(product_id)
+   products.show_produtct_info(product_id)
 ###### shows product info, search by id
 # @/products/{id} Delete
-   market.delete_product_by_id(product_id)
+   products.delete_product_by_id(product_id)
 ###### deletes product by id
 # @/products/{id} Update
-   market.update_product(product_id, Dict)
+   products.update_product(product_id, Dict)
 ###### Receives products id and a dictionary {'Product Name': value , 'Product Description': value', 'Product Price': value}
-   market.update_product('1',{'Product Name': 'carro' , 'Product Description': 'ambulância', 'Product Price': 'R$ 100.000,00'})
+   products.update_product('1',{'Product Name': 'carro' , 'Product Description': 'ambulância', 'Product Price': 'R$ 100.000,00'})
 # @/orders 
 
 # @/orders/{orderId}
