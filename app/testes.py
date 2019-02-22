@@ -1,5 +1,5 @@
 from backEnd import Users
-from backEnd import market
+from backEnd import products
 import time  
 #import datetime
 
@@ -10,14 +10,14 @@ Users.add_user('Carlos','Hernesto','Medeiros', 'carlos@gmail.com','1948-07-05', 
 Users.gettingUsers()
 
 #(username, product_name, product_description, product_price):
-market.insert_product('hildermes', 'luvas médicas', '100 luvas de latex descartáveis', 'R$ 29,90')
-market.show_product_info('1')
+products.insert_product('hildermes', 'luvas médicas', '100 luvas de latex descartáveis', 'R$ 29,90')
+products.show_product_info('1')
 
-market.insert_product('hildermes', 'cadeiras de roda', 'cadeira de roda elétrica', 'R$ 7900,90')
-market.show_product_info('2')
-market.delete_product_by_id('2')
-market.show_product_info('2')
+products.insert_product('hildermes', 'cadeiras de roda', 'cadeira de roda elétrica', 'R$ 7900,90')
+products.show_product_info('2')
+products.delete_product_by_id('2')
+products.show_product_info('2')
 
 
-market.update_product('1', 'Product Name': 'carro' , 'Product Description': 'ambulância', 'Product Price': 'R$ 100.000,00')
-market.show_product_info('1')
+products.update_product('1', 'Product Name': 'carro' , 'Product Description': 'ambulância', 'Product Price': 'R$ 100.000,00')
+products.show_product_info('1')
