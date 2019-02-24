@@ -19,5 +19,5 @@ products.delete_product_by_id('2')
 products.show_product_info('2')
 
 
-products.update_product('1', 'Product Name': 'carro' , 'Product Description': 'ambulância', 'Product Price': 'R$ 100.000,00')
+products.update_product('1', {'Product Name': 'carro' , 'Product Description': 'ambulância', 'Product Price': 'R$ 100.000,00'})
 products.show_product_info('1')
