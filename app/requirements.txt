@@ -7,3 +7,4 @@ Werkzeug==0.14
 Flask-HTTPAuth
 flask_login
 flask_debugtoolbar
+Flask-SQLAlchemy==2.3.1

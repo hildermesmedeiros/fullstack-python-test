@@ -13,8 +13,8 @@ services:
     ports:
       - "32000:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: hildermes
+      MYSQL_ROOT_PASSWORD: 1234
 
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro
