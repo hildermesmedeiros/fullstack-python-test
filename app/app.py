@@ -1,86 +1,100 @@
-from typing import List, Dict
-from flask import Flask, request, render_template, json, g
-import mysql.connector
-from flask_debugtoolbar import DebugToolbarExtension
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired
-from flask_httpauth import HTTPBasicAuth
-from passlib.apps import custom_app_context as pwd_context
-#from itsdangerous import (TimedJSONWebSignatureSerializeras Serializer, BadSignature, SignatureExpired)
-from werkzeug.security import generate_password_hash, check_password_hash
-import time  
-import datetime
+#----------------------------------------------------------------------------#
+# Imports
+#----------------------------------------------------------------------------#
+
+from flask import Flask, render_template, request
+# from flask.ext.sqlalchemy import SQLAlchemy
+import logging
+from logging import Formatter, FileHandler
+from forms import *
 import os
-from backEnd import Users
+
+#----------------------------------------------------------------------------#
+# App Config.
+#----------------------------------------------------------------------------#
 
 app = Flask(__name__)
-app.debug = True
-app.config['SECRET_KEY'] = 'DoNoEVERshareittosomeone'
-auth = HTTPBasicAuth()
-ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
+app.config.from_object('config')
+#db = SQLAlchemy(app)
 
-toolbar = DebugToolbarExtension(app)
-app.config['DEBUG_TB_PROFILER_ENABLED'] = True
-
-
-     
-                
-add_hildermes()
+# Automatically tear down SQLAlchemy.
 '''
-testing if getting users works
-userslist = gettingUsers()
-print(userslist) 
-username = 'hildermes'
-for dic in userslist:
-    if dic['username'] == username:
-        print(str(dic['username']))
-        hashpass = dic['password']
-        print(hashpass)         
-'''          
-@auth.verify_password
-def verify_password(username, password):
-    userslist = Users.gettingUsers()
-    g.user = None
-    for dic in userslist:
-        if dic['username'] == username:
-            hashpass = dic['password']
-            if check_password_hash(hashpass, password) == True:
-                return True  
-    return False
-    
-class signinForm(FlaskForm):
-	#flask recommendation is to use inputRequired instead of datarequired
-    username = StringField('Nome do usuário', validators = [DataRequired()])
-    password = PasswordField('senha', validators=[InputRequired()])
-	
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    return render_template('index.html')
+@app.teardown_request
+def shutdown_session(exception=None):
+    db_session.remove()
+'''
 
-@app.route('/signin', methods=['GET','POST'])
-@auth.login_required
-def signin():
-    try:
-        form = signinForm(FlaskForm)
-        error = None
-        if form.validate_on_submit() and verify_password(username,password) == True:
-            g.user = username           
-            next = flask.request.args.get('next')
-            #this a MUST to prevent redirect injections
-            if not is_safe_url(next):
-                return flask.abort(400)
-        return flask.redirect(next or flask.url_for('index'))   
-    except:
-        error = 'Houve algum erro ao logar'  
-    return render_template('signin.html', error=error)
+# Login required decorator.
+'''
+def login_required(test):
+    @wraps(test)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return test(*args, **kwargs)
+        else:
+            flash('You need to login first.')
+            return redirect(url_for('login'))
+    return wrap
+'''
+#----------------------------------------------------------------------------#
+# Controllers.
+#----------------------------------------------------------------------------#
 
-@app.route("/logout")
-@auth.login_required
-def logout():
-    logout_user()
-    return redirect('/')
-    
-##Coonection to external port, binding to
+
+@app.route('/')
+def home():
+    return render_template('pages/placeholder.home.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('pages/placeholder.about.html')
+
+
+@app.route('/login')
+def login():
+    form = LoginForm(request.form)
+    return render_template('forms/login.html', form=form)
+
+
+@app.route('/register')
+def register():
+    form = RegisterForm(request.form)
+    return render_template('forms/register.html', form=form)
+
+
+@app.route('/forgot')
+def forgot():
+    form = ForgotForm(request.form)
+    return render_template('forms/forgot.html', form=form)
+
+# Error handlers.
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    #db_session.rollback()
+    return render_template('errors/500.html'), 500
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('errors/404.html'), 404
+
+if not app.debug:
+    file_handler = FileHandler('error.log')
+    file_handler.setFormatter(
+        Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+    )
+    app.logger.setLevel(logging.INFO)
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    app.logger.info('errors')
+
+#----------------------------------------------------------------------------#
+# Launch.
+#----------------------------------------------------------------------------#
+
+# start the server with the 'run()' method
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
