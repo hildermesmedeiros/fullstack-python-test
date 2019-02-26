@@ -1,15 +1,17 @@
+# -*- coding: utf-8 -*-
 from typing import List, Dict
 import mysql.connector
 import time
 from werkzeug.security import generate_password_hash, check_password_hash  
+from backEnd import tm_siteuser
 #import datetime
 
-
+'''
 #to be used in signin
 def gettingUsers() -> List[Dict]:
     config = {
-        'user': 'root',
-        'password': 'root',
+        'user': 'hildermes',
+        'password': '1234',
         'host': 'db',
         'port': '3306',
         'database': 'telemedicina'
@@ -18,13 +20,13 @@ def gettingUsers() -> List[Dict]:
 #python postgresql connection
     cursor = connection.cursor()
 #Selecting all users
-    cursor.execute('SELECT uname,hashpass FROM tm_siteuser')
+    cursor.execute('SELECT uname,hashpass,id FROM tm_siteuser')
 #fetchin data  all data from user   
 #    data=cursor.fetchone()
     users = []
     for row in cursor:
         a = list(row)
-        dic = {'username': a[0], 'password': a[1]}
+        dic = {'username': a[0], 'password': a[1], 'id': a[2]}
         users.append(dic)
 #closing the table connection
     cursor.close()
@@ -32,21 +34,11 @@ def gettingUsers() -> List[Dict]:
     connection.close()
     print(users)
     return users
+'''
     
 #To be used in signup    
 def add_user(username, firstname, middlename, email, birthday, password, usertype):
     try:
-        config = {
-        'user': 'root',
-        'password': 'root',
-        'host': 'db',
-        'port': '3306',
-        'database': 'telemedicina'
-        }
-        
-        connection = mysql.connector.connect(**config)	
-        cursor = connection.cursor()
-        
         uname =  str.lower(username)
         fname = firstname
         mname = middlename
@@ -56,7 +48,7 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
         timestamp = time.strftime('%Y-%m-%d %H-%M-%S')
         hashpass = generate_password_hash(password)
         typeid = usertype 
-        query = []
+        db.
         sql = "SELECT EXISTS(SELECT uname FROM tm_siteuser WHERE uname = %s LIMIT 1)"
         adr = (uname, )
         cursor.execute(sql, adr)
@@ -76,6 +68,7 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
             query = list(cursor.fetchone())
             cursor.close()
             connection.close()
+            query = 
             if query[0] == 0:
                 print('Usuário ',uname,' será adicionado')
                 print('username = ', uname)
@@ -95,4 +88,12 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
         print('ALGUM ERRO ACONTECEU. Erro: ', e)
     finally:
         print('fechando')
-          
+         
+def verify_password(username, password):
+    userslist = tm_siteusers.query.filter_by(username, hashpass).all()
+    for dic in userslist:
+        if dic['username'] == username:
+            hashpass = dic['password']
+            #this returns true or false
+            return check_password_hash(hashpass, password)
+    return False

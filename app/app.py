@@ -1,21 +1,19 @@
+# -*- coding: utf-8 -*-
 #----------------------------------------------------------------------------#
 # Imports
 #----------------------------------------------------------------------------#
-
-from flask import Flask, render_template, request
-# from flask.ext.sqlalchemy import SQLAlchemy
+from flask import (Flask, render_template, request, g, session, flash, redirect,
+    url_for, abort)
+from functools import wraps
 import logging
 from logging import Formatter, FileHandler
 from forms import *
 import os
-
 #----------------------------------------------------------------------------#
-# App Config.
+# Mybackends (testing)
 #----------------------------------------------------------------------------#
-
-app = Flask(__name__)
-app.config.from_object('config')
-#db = SQLAlchemy(app)
+from backEnd import app, db
+#from backEnd import Users
 
 # Automatically tear down SQLAlchemy.
 '''
@@ -25,17 +23,17 @@ def shutdown_session(exception=None):
 '''
 
 # Login required decorator.
-'''
+
 def login_required(test):
     @wraps(test)
     def wrap(*args, **kwargs):
         if 'logged_in' in session:
             return test(*args, **kwargs)
         else:
-            flash('You need to login first.')
+            flash('Você Precisa Logar Primeiro.')
             return redirect(url_for('login'))
     return wrap
-'''
+
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
@@ -51,12 +49,28 @@ def about():
     return render_template('pages/placeholder.about.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET','POST'])
 def login():
+    error = None
     form = LoginForm(request.form)
+    if request.method == 'POST':
+        username = request.form['name']
+        password = request.form['password']
+        if form.validate_on_submit() and verify_password(username,password) == False:
+            flash('Senha ou usuário inválidos. Tente Novamente.')
+        else:
+            g.user = username
+            session['logged_in'] = True
+            flash('Bem  vindo', )
+            return redirect(url_for('home'))
     return render_template('forms/login.html', form=form)
 
-
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('Você deslogu')
+    return redirect(url_for('home'))
+    
 @app.route('/register')
 def register():
     form = RegisterForm(request.form)
@@ -68,9 +82,8 @@ def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form=form)
 
+
 # Error handlers.
-
-
 @app.errorhandler(500)
 def internal_error(error):
     #db_session.rollback()

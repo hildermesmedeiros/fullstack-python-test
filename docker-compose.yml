@@ -6,7 +6,11 @@ services:
       - db
     ports:
       - "5000:5000"
-
+    environment:
+    #those will be used by config.py and app.py, before changing it read them to understand
+      - APP_SETTINGS=config.DevelopmentConfig  
+     # - DATABASE_URL=mysql+pymysql://hildermes:1234@0.0.0.0:32000/telemedicina
+      - DATABASE_URL=mysql://hildermes:1234@0.0.0.0:32000/telemedicina
   db:
     image: mysql:8.0
     restart: always
