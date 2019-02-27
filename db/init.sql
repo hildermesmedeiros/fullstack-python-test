@@ -6,12 +6,12 @@ DROP TABLE IF EXISTS tm_siteuser;
 CREATE TABLE tm_siteuser (
   id    INTEGER NOT NULL 
     PRIMARY KEY AUTO_INCREMENT,
-  uname VARCHAR(100) NOT NULL 
+  username VARCHAR(100) NOT NULL 
     UNIQUE KEY,
-  fname TEXT NOT NULL,
-  mname TEXT NOT NULL,
+  firstname TEXT NOT NULL,
+  middlename TEXT NOT NULL,
   email TEXT NOT NULL,
-  niver DATE NOT NULL,
+  birthday DATE NOT NULL,
   t1 TIMESTAMP NOT NULL 
     ON UPDATE CURRENT_TIMESTAMP,
   hashpass CHAR(128) NOT NULL,

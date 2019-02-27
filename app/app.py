@@ -9,6 +9,7 @@ import logging
 from logging import Formatter, FileHandler
 from forms import *
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
 #----------------------------------------------------------------------------#
 # Mybackends (testing)
 #----------------------------------------------------------------------------#
@@ -51,12 +52,30 @@ def about():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
+    form = LoginForm(request.form)
+    try:
+        if request.method == 'POST':
+            if form.validate_on_submit():
+                user = tm_siteuser.query.filter_by(username=request.form['name'])
+                if user != None and check_password_hash(user.password,request.form['name']):
+                    session['logged_in']=True
+                    flash('Você foi logado a página')
+                    return redirect(url_for('home'))
+                else:
+                    flash('Algum erro')
+                    render_template('forms/login.html', form=form)
+        return render_template('forms/login.html', form=form)      
+    except Exception as e:
+        flash('ALGUM ERRO ACONTECEU. Erro: ', e)
+        return render_template('forms/login.html', form=form)            
+'''
+def login():
     error = None
     form = LoginForm(request.form)
     if request.method == 'POST':
         username = request.form['name']
         password = request.form['password']
-        if form.validate_on_submit() and verify_password(username,password) == False:
+        if (form.validate_on_submit() and verify_password(username,password)) == False:
             flash('Senha ou usuário inválidos. Tente Novamente.')
         else:
             g.user = username
@@ -64,16 +83,31 @@ def login():
             flash('Bem  vindo', )
             return redirect(url_for('home'))
     return render_template('forms/login.html', form=form)
-
+'''
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     flash('Você deslogu')
     return redirect(url_for('home'))
     
-@app.route('/register')
+@app.route('/register', methods=['GET','POST'])
 def register():
     form = RegisterForm(request.form)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = tm_siteuser(
+                username = form.username.data,
+                email = form.email.data,
+                firstname = form.firstname.data,
+                middlename = form.middlename.data,
+                birthday = form.birthday.data,
+                hashpass = generate_password_hash(form.password.data),
+                timestamp = time.strftime('%Y-%m-%d %H-%M-%S'),
+                typeid = 1
+            )
+            db.session.add(tm_siteuser)
+            db.session.commit()
+            return redirect(url_for('home'))
     return render_template('forms/register.html', form=form)
 
 
@@ -82,7 +116,7 @@ def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form=form)
 
-
+'''
 # Error handlers.
 @app.errorhandler(500)
 def internal_error(error):
@@ -93,7 +127,7 @@ def internal_error(error):
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('errors/404.html'), 404
-
+'''
 if not app.debug:
     file_handler = FileHandler('error.log')
     file_handler.setFormatter(

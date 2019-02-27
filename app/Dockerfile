@@ -24,5 +24,5 @@ ADD . /app
 #COPY templates /app/templates
 #COPY backEnd /app/backEnd
 
-CMD python app.py
-#CMD python testes.py
+#CMD ["python","-u", "app.py"]
+CMD python testes.py

@@ -9,16 +9,16 @@ services:
     environment:
     #those will be used by config.py and app.py, before changing it read them to understand
       - APP_SETTINGS=config.DevelopmentConfig  
-     # - DATABASE_URL=mysql+pymysql://hildermes:1234@0.0.0.0:32000/telemedicina
-      - DATABASE_URL=mysql://hildermes:1234@0.0.0.0:32000/telemedicina
+     # - DATABASE_URL=mysql+pymysql://hildermes:1234@db:3306/telemedicina
+      - DATABASE_URL=mysql://root:1234@db:3306/telemedicina
   db:
-    image: mysql:8.0
+    image: mysql:5.7
     restart: always
     ports:
       - "32000:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: hildermes
       MYSQL_ROOT_PASSWORD: 1234
-
+      MYSQL_USER: hildermes
+      MYSQL_PASSWORD: telemedicina
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro

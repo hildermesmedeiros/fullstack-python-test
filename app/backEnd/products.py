@@ -13,7 +13,7 @@ def insert_product(username, product_name, product_description, product_price):
             
         config = {
         'user': 'root',
-        'password': 'root',
+        'password': '1234',
         'host': 'db',
         'port': '3306',
         'database': 'telemedicina'
@@ -62,7 +62,7 @@ def delete_product_by_id(product_id):
         print("deletando produto")
         config = {
         'user': 'root',
-        'password': 'root',
+        'password': '1234',
         'host': 'db',
         'port': '3306',
         'database': 'telemedicina'
@@ -83,7 +83,7 @@ def show_product_info(product_id):
         print("Informações sobre o produto")
         config = {
         'user': 'root',
-        'password': 'root',
+        'password': '1234',
         'host': 'db',
         'port': '3306',
         'database': 'telemedicina'
@@ -110,7 +110,7 @@ def update_product(product_id, Dict):
     
         config = {
         'user': 'root',
-        'password': 'root',
+        'password': '1234',
         'host': 'db',
         'port': '3306',
         'database': 'telemedicina'

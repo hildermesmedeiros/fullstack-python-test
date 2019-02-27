@@ -1,4 +1,6 @@
 Flask==1.0.2
+pymysql
+mysqlclient
 mysql-connector-python==8.0.14
 Flask-WTF==0.14.2
 passlib==1.7.1
@@ -8,3 +10,4 @@ Flask-HTTPAuth
 flask_login
 flask_debugtoolbar
 Flask-SQLAlchemy==2.3.1
+cryptography

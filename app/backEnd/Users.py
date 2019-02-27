@@ -3,14 +3,14 @@ from typing import List, Dict
 import mysql.connector
 import time
 from werkzeug.security import generate_password_hash, check_password_hash  
-from backEnd import tm_siteuser
+from backEnd.models import tm_siteuser
 #import datetime
 
-'''
+
 #to be used in signin
 def gettingUsers() -> List[Dict]:
     config = {
-        'user': 'hildermes',
+        'user': 'root',
         'password': '1234',
         'host': 'db',
         'port': '3306',
@@ -34,7 +34,7 @@ def gettingUsers() -> List[Dict]:
     connection.close()
     print(users)
     return users
-'''
+
     
 #To be used in signup    
 def add_user(username, firstname, middlename, email, birthday, password, usertype):
@@ -48,7 +48,6 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
         timestamp = time.strftime('%Y-%m-%d %H-%M-%S')
         hashpass = generate_password_hash(password)
         typeid = usertype 
-        db.
         sql = "SELECT EXISTS(SELECT uname FROM tm_siteuser WHERE uname = %s LIMIT 1)"
         adr = (uname, )
         cursor.execute(sql, adr)
@@ -68,7 +67,6 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
             query = list(cursor.fetchone())
             cursor.close()
             connection.close()
-            query = 
             if query[0] == 0:
                 print('Usuário ',uname,' será adicionado')
                 print('username = ', uname)
@@ -90,10 +88,13 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
         print('fechando')
          
 def verify_password(username, password):
-    userslist = tm_siteusers.query.filter_by(username, hashpass).all()
+    userslist = tm_siteuser.query.filter_by(username=username).first()
+    print('users:', userslist)
+    '''
     for dic in userslist:
         if dic['username'] == username:
             hashpass = dic['password']
             #this returns true or false
             return check_password_hash(hashpass, password)
     return False
+    '''
