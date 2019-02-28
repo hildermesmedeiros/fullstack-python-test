@@ -9,7 +9,7 @@ services:
     environment:
     #those will be used by config.py and app.py, before changing it read them to understand
       - APP_SETTINGS=config.DevelopmentConfig  
-     # - DATABASE_URL=mysql+pymysql://hildermes:1234@db:3306/telemedicina
+    #the mysql url, we gonna parse it true os env
       - DATABASE_URL=mysql://root:1234@db:3306/telemedicina
   db:
     image: mysql:5.7
@@ -17,6 +17,7 @@ services:
     ports:
       - "32000:3306"
     environment:
+    # to check some mysql env : https://github.com/docker-library/docs/tree/master/mysql
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_USER: hildermes
       MYSQL_PASSWORD: telemedicina
