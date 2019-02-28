@@ -11,3 +11,4 @@ flask_login
 flask_debugtoolbar
 Flask-SQLAlchemy==2.3.1
 cryptography
+Flask-Bcrypt
