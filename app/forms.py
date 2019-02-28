@@ -34,7 +34,7 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    name = TextField('Nome', [DataRequired()])
+    username = TextField('Nome', [DataRequired()])
     password = PasswordField('Senha', [DataRequired()])
 
 
