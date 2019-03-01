@@ -4,7 +4,7 @@
 #----------------------------------------------------------------------------#
 from flask import (Flask, render_template, request, flash, redirect,
     url_for, abort)
-from flask_login import (current_user, login_user, login_required, logout_user)
+from flask_login import (current_user, login_user, login_required, logout_user, confirm_login)
 from forms import *
 import os
 from flask_login import AnonymousUserMixin as notUser
@@ -41,12 +41,11 @@ app.config['DEBUG_TB_PROFILER_ENABLED'] = True
 
 @app.route('/', methods=['GET', 'POST'], endpoint='home')
 def home():
-    #If its anonymous user
-    if notUser.is_anonymous:
-        flash(u"Não esqueça de logar")
-    elif notUser.is_anonymous==True:
-        login_manager.login_message = u"Bem vindo, você acaba de logar."
-    return render_template('pages/placeholder.home.html')
+    if current_user.is_anonymous:
+        usermsg= 'Não esqueça de logar'
+    elif current_user.is_authenticated:
+        usermsg = str('Olá ', current_user.username)
+    return render_template('pages/placeholder.home.html', usermsg=usermsg)
 
 
 @app.route('/about')
@@ -56,49 +55,41 @@ def about():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    logging.warning("See this message in Flask Debug Toolbar!")
-    form = LoginForm(request.form)
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            user = tm_siteuser.query.filter_by(username=request.form['username']).first()
-            logging.warning(str(user))
-            if user is not None and bcrypt.check_password_hash(
-                user.hashpass, request.form['password']
-            ):
-                login_user(user)
-                flash(u'You were logged in. Go Crazy.')
-                return redirect(url_for('home'))
-               
-    return render_template('forms/signin.html', form=form) 
-                     
-'''
-def login():
-    error = None
-    form = LoginForm(request.form)
-    if request.method == 'POST':
-        username = request.form['name']
-        password = request.form['password']
-        if (form.validate_on_submit() and verify_password(username,password)) == False:
-            flash('Senha ou usuário inválidos. Tente Novamente.')
-        else:
-            g.user = username
-            session['logged_in'] = True
-            flash('Bem  vindo', )
-            return redirect(url_for('home'))
-    return render_template('forms/login.html', form=form)
-'''
+    if notUser.is_anonymous:
+        logging.warning("Signin post ")
+        form = LoginForm(request.form)
+        if request.method == 'POST':
+            if form.validate_on_submit():
+                user = tm_siteuser.query.filter_by(username=request.form['username']).first()
+                logging.warning(str(user))
+                if user is not None and bcrypt.check_password_hash(
+                    user.hashpass, request.form['password']
+                ):
+                    login_user(user)
+                    return redirect(url_for('home'))
+                
+        return render_template('forms/signin.html', form=form) 
+    return redirect(url_for('home'))    
+             
 @app.route('/logout')
 @login_required
 def logout():
-    logout_user()
+    if current_user.is_authenticated:
+        logout_user()
+        return redirect(url_for('home'))
     return redirect(url_for('home'))
     
 @app.route('/register', methods=['GET','POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
+    logout_user()     
     form = RegisterForm(request.form)
+    error = None
     if request.method == 'POST':
         if form.validate_on_submit():
-            user = tm_siteuser(
+            tm_siteuser(
                 username = form.username.data,
                 email = form.email.data,
                 firstname = form.firstname.data,
@@ -107,11 +98,18 @@ def register():
                 #models converts pass to hash
                 hashpass = form.password.data,
                 timestamp = time.strftime('%Y-%m-%d %H-%M-%S'),
-                typeid = 1
+                typeid = 1 
             )
-            db.session.add(tm_siteuser)
-            db.session.commit()
-            return redirect(url_for('index'))
+
+            try:
+                db.session.commit()
+            except mysql.connector.Error as e1:
+                db.session.rollback()
+                error = e1    
+            finally:
+                if error == None:
+                    login_user(user)
+                    return redirect(url_for('home'))
     return render_template('forms/register.html', form=form)
 
 
