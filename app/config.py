@@ -6,8 +6,8 @@ class BaseConfig(object):
     DEBUG = False
     # shortened for readability, try # https://randomkeygen.com/
     #or try import os, it has a function urandom(), you could try os.urandom(24)
+    #The betther way is to ask it from env
     SECRET_KEY = 'NeverEverShareItToSomeOne'
-#    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://hildermes:1234@0.0.0.0:32000/telemedicina'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     
 #test config eirs base attributes change some, and add others.
@@ -15,6 +15,7 @@ class TestConfig(BaseConfig):
     DEBUG = True
     TESTING = True
     WTF_CSRF_ENABLED = False
+    TEMPLATES_AUTO_RELOAD = True
 
 #Dev config eirs base attributes change some, and add others.
 class DevelopmentConfig(BaseConfig):
