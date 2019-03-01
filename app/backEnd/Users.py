@@ -6,6 +6,7 @@ import time
 from backEnd import bcrypt 
 from backEnd.models import tm_siteuser
 from backEnd import app, db 
+from sqlalchemy import exc
 #import datetime
 
     
@@ -28,16 +29,15 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
         db.session.add(User)
         try:
             db.session.commit()
-        except Exception as e1:
-            db.session.rollback()
+        except exc.SQLAlchemyError as e1:
             commiterror = e1
-            print("Commit Error:", e1)
+            db.session.rollback()
+            print("Commit Error:", e1.args[0])
+            print("Commit failed, roll back done")
     except Exception as e2:
         otherError = e2
         print('Other error: ', e2)
-        return
     finally:
         if commiterror == None and otherError == None:
             print('Usuário adicionado: ', User.username )
-        else:
-            print('O erro acima fechou o programa')                          
+                          
