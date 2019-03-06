@@ -16,8 +16,6 @@ password=bcrypt.generate_password_hash(u'hildermes').decode('utf-8')
 print(password)
 a=bcrypt.check_password_hash(hildermes.hashpass,'tele')
 print(a)
-#Users.add_user('Carlos','Hernesto','Medeiros', 'carlos@gmail.com','1948-07-05', 'carlgomes', 1)
-Users.add_user('teste1','Hernesto','Medeiros', 'teste1@gmail.com','1948-07-05', 'carlgomes', 1)
 '''
 #(username, product_name, product_description, product_price):
 products.insert_product('hildermes', 'luvas médicas', '100 luvas de latex descartáveis', 'R$ 29,90')
@@ -39,3 +37,4 @@ print("|---  |  \\  |  |     |       |    |---     \\      |      \\ ")
 print("|     |   \\ |  |     /       |    |        /      |      /  ")
 print("|___  |    \\|  |____/        |    |___  __/       |   __/   ")
 print("                                                               ")
+exit()
