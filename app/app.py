@@ -55,7 +55,7 @@ def homewithuser(user_id):
 def about():
     return render_template('pages/placeholder.about.html')
 
-@app.route('/user/about/<user_id>', methods=['GET', 'POST'], endpoint='aboutuser')
+@app.route('/user/<user_id>/about', methods=['GET', 'POST'], endpoint='aboutuser')
 def about(user_id):
     user_id=session['user_id']
     return render_template('pages/placeholder.aboutuser.html')
