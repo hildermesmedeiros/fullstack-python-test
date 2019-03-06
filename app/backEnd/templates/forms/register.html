@@ -2,22 +2,25 @@
 {% block title %}Registre-se{% endblock %}
 {% block content %}
   <form method="post" class="form">
-    <h3 class="form-heading">Registre-se <a href="{{ url_for('home') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a></h3>
     {{ form.csrf_token }}
+    <h3 class="form-heading">Registre-se <a href="{{ url_for('home') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a></h3>
     {{ form.hidden_tag() }}
     {{ form.name(class_ = 'form-control first-input', placeholder = form.name.label.text, required = true, autofocus = true) }}
-    {% for error in form.name.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
+      {% for error in form.name.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     {{ form.email(class_ = 'form-control', placeholder = form.email.label.text, required = true) }}
-    {% for error in form.email.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
+      {% for error in form.email.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     {{ form.firstname(class_ = 'form-control', placeholder = form.firstname.label.text, required = true) }}
     {{ form.middlename(class_ = 'form-control', placeholder = form.middlename.label.text, required = true) }}
     {{ form.birthday(class_ = 'form-control', placeholder = form.birthday.label.text, required = true) }}
     {{ form.password(class_ = 'form-control', placeholder = form.password.label.text, required = true) }}
     {{ form.confirm(class_ = 'form-control last-input', placeholder = form.confirm.label.text, required = true) }}
+      {% for error in form.password.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     <p class="pull-left"><a href="{{ url_for('login') }}">Login</a></p>
     <input type="submit" value="Registrar" class="btn btn-primary btn-lg btn-block"  enabled>
   </form>
