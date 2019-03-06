@@ -2,7 +2,7 @@
 {% block title %}signin{% endblock %}
 {% block content %}
   <form method="post" class="form">
-    <h3 class="form-heading">Logar <a href="{{ url_for('home') }}" title="De volta a Principal"><i class="fa fa-home pull-right"></i></a></h3>
+    <h3 class="form-heading">Logar <a href="{{ url_for('homewithuser', user_id=session['user_id']) }}" title="De volta a Principal"><i class="fa fa-home pull-right"></i></a></h3>
     {{ form.csrf_token }}
     {{ form.username(class_ = 'form-control first-input', placeholder = form.username.label.text, required = true, autofocus = true) }}
     {{ form.password(class_ = 'form-control last-input', placeholder = form.password.label.text, required = true) }}
