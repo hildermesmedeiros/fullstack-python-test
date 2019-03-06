@@ -18,6 +18,7 @@ class RegisterForm(FlaskForm):
     middlename = TextField(
         'Sobre nome', validators=[DataRequired(), Length(min=6, max=40)]
     )
+    #MUST change your create my on html5 field, this one won't do.
     birthday = DateField(
         'Data de Nascimento',format="%Y-%m-%d", validators=[DataRequired()]
     )        
