@@ -20,7 +20,7 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
             firstname = firstname,
             middlename = middlename,
             email = email,
-            birthday = birthday,
+            birthday = birthday, #yy mm dd
             #first add requires first time stamp
             t1 = time.strftime('%Y-%m-%d %H-%M-%S'),
             hashpass = password,
@@ -40,4 +40,6 @@ def add_user(username, firstname, middlename, email, birthday, password, usertyp
     finally:
         if commiterror == None and otherError == None:
             print('Usuário adicionado: ', User.username )
+            return commiterror, otherError
+        return commiterror, otherError
                           
