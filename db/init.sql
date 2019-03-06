@@ -1,6 +1,13 @@
 CREATE DATABASE telemedicina;
 use telemedicina;
 
+SET GLOBAL max_connections = 400;
+SET GLOBAL net_buffer_length = 16384;
+SET GLOBAL net_read_timeout = 360;
+SET GLOBAL net_retry_count = 10;
+SET GLOBAL net_write_timeout = 360;
+SET GLOBAL max_allowed_packet = 128*1024*1024;
+
 DROP TABLE IF EXISTS tm_siteuser;
 CREATE TABLE tm_siteuser (
   id    INTEGER PRIMARY 
