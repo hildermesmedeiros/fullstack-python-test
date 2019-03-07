@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import TextField, PasswordField
+from wtforms import TextField, PasswordField, DecimalField, TextAreaField
 #for some reason 
 from wtforms.fields.html5 import DateField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired, Length
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired, Length, Regexp
 from backEnd import tm_siteuser
 # Set form classes here.
 
@@ -43,10 +43,28 @@ class RegisterForm(FlaskForm):
             raise ValidationError('Este email já está cadastrado')
 
 class LoginForm(FlaskForm):
-    username = TextField('Nome', [DataRequired()])
-    password = PasswordField('Senha', [DataRequired()])
+    username = TextField(
+    'Nome', [DataRequired()]
+    )
+    password = PasswordField(
+    'Senha', [DataRequired()]
+    )
 
-
+class ProductsForm(FlaskForm):
+    ProductName = TextField(
+    'Nome do produto', [DataRequired()]
+    )
+    description = TextAreaField(
+    'Descrição', [DataRequired()]
+    )
+    price = DecimalField(
+    'R$',[DataRequired()], places=2, rounding=None 
+    )
+    def validate_price(self, price):
+        if Regexp(price.data) == False:
+            raise ValidationError('Número entre RS 0 e RS 999999.99')
+            
+#Should implemment, add email auth first
 class ForgotForm(FlaskForm):
     email = TextField(
         'Email', validators=[DataRequired(), Length(min=6, max=40)]
