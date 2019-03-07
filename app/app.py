@@ -121,7 +121,12 @@ def register():
         #flash(form.errors)
         #flash(form.birthday.data)
         return render_template('forms/register.html', form=form)
-
+        
+@app.route('/user/<user_id>/products', methods=['GET','POST'], endpoint='products')
+def products(user_id):
+    form = ProductsForm(request.form)
+    user_id=session['user_id']
+    return render_template('forms/products.html', user_id=user_id, form=form)
 
 @app.route('/forgot')
 def forgot():
