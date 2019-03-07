@@ -62,7 +62,7 @@
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown"> Lista <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a>Ação 1</a></li>
+                <li {% if request.endpoint == 'products' %} class="active" {% endif %}><a href="{{ url_for('products', user_id=session['user_id']) }}">Products+</a></li> 
                 <li><a>Outra ação</a></li>
                 <li><a>Outra coisa aqui</a></li>
                 <li class="divider"></li>
