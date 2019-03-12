@@ -7,10 +7,10 @@
     docker-compose up
 # @/signin
 ![signin](/screenshots/signin.gif)
-
+###### log user
 
 # @/signup to be used with post methods
-   Users.add_user(username, firstname, middlename, email, birthday, password, usertype)
+![signup](/screenshots/signup.gif)
 ###### Adds user to database inputs:
 ###### auto generates timestamp, that shows user add date or last time user info got updated.
 
