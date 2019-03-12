@@ -6,11 +6,15 @@ services:
       - db
     ports:
       - "5000:5000"
+    restart: unless-stopped  
     environment:
+      #dockker
+      - WAIT_HOSTS:mysql:3306
     #those will be used by config.py and app.py, before changing it read them to understand
       - APP_SETTINGS=config.DevelopmentConfig  
     #the mysql url, we gonna parse it true os env
       - DATABASE_URL=mysql://root:1234@db:3306/telemedicina
+
   db:
     image: mysql:5.7
     restart: always
