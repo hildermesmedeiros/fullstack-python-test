@@ -4,15 +4,10 @@
 ##### on linux run
     docker-compose build
 ##### then
-    docker-compose up db
-##### wait till you see it binded to the correct adress (port: 33060)
-##### then
-##### this will run only the test.py we are under development
-    docker-compose up app
-# @/signin to be used with post methods
-    Users.gettingUsers()
-###### returns a list of dictionarys with usernames and hashpassword
-###### To use when checking user name and password, compares to hash password and username
+    docker-compose up
+# @/signin
+![signin](/screenshots/signin.gif)
+
 
 # @/signup to be used with post methods
    Users.add_user(username, firstname, middlename, email, birthday, password, usertype)
